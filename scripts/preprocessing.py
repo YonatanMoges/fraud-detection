@@ -114,3 +114,15 @@ class FraudPreprocessing:
         self.normalize_and_scale()
         self.encode_categorical_features()
         return self.fraud_data, self.credit_data
+    
+    def save_processed_data(self, fraud_output_path="processed_fraud_data.csv", credit_output_path="processed_credit_data.csv"):
+        """
+        Saves the preprocessed fraud and credit datasets to CSV files.
+        
+        Parameters:
+        - fraud_output_path (str): File path to save the processed fraud data.
+        - credit_output_path (str): File path to save the processed credit card data.
+        """
+        # Save the processed datasets to CSV
+        self.fraud_data.to_csv(fraud_output_path, index=False)
+        self.credit_data.to_csv(credit_output_path, index=False)
