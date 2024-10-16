@@ -69,10 +69,17 @@ class FraudPreprocessing:
     
     @staticmethod
     def ip_to_integer(ip):
-        # Convert IP to integer for merging
+        # Ensure IP format is valid (i.e., has 4 parts); if not, return a default integer (0)
         parts = ip.split('.')
-        return int(parts[0]) * 256**3 + int(parts[1]) * 256**2 + int(parts[2]) * 256 + int(parts[3])
-    
+        if len(parts) != 4:
+            return 0  # Use a default integer for invalid IPs
+        
+        try:
+            # Convert each part to an integer and calculate the full IP integer value
+            return int(parts[0]) * 256**3 + int(parts[1]) * 256**2 + int(parts[2]) * 256 + int(parts[3])
+        except ValueError:
+            return 0  # Return 0 if any part of IP address is not an integer
+
     def feature_engineering(self):
         # Transaction frequency and velocity
         self.fraud_data['signup_purchase_diff'] = (self.fraud_data['purchase_time'] - self.fraud_data['signup_time']).dt.total_seconds()
