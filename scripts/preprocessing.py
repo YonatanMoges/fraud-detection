@@ -34,12 +34,23 @@ class FraudPreprocessing:
     
     def bivariate_analysis(self):
         # Bivariate analysis - Correlation and some simple comparisons
-        corr_matrix_fraud = self.fraud_data.corr()
-        corr_matrix_credit = self.credit_data.corr()
+        # Select only numeric columns for correlation matrix calculation
+        fraud_numeric = self.fraud_data.select_dtypes(include=[np.number])
+        credit_numeric = self.credit_data.select_dtypes(include=[np.number])
+        
+        # Calculate correlation matrices
+        corr_matrix_fraud = fraud_numeric.corr()
+        corr_matrix_credit = credit_numeric.corr()
+        
         return {"Fraud Data Correlation": corr_matrix_fraud, "Credit Data Correlation": corr_matrix_credit}
-    
+
     def merge_datasets(self):
-        # Convert IP addresses to integer format and merge with IP to country dataset
+        # Ensure IP addresses are strings and handle missing values
+        self.fraud_data['ip_address'] = self.fraud_data['ip_address'].fillna("0.0.0.0").astype(str)
+        self.ip_data['lower_bound_ip_address'] = self.ip_data['lower_bound_ip_address'].fillna("0.0.0.0").astype(str)
+        self.ip_data['upper_bound_ip_address'] = self.ip_data['upper_bound_ip_address'].fillna("0.0.0.0").astype(str)
+        
+        # Convert IP addresses to integer format
         self.fraud_data['ip_address'] = self.fraud_data['ip_address'].apply(self.ip_to_integer)
         self.ip_data['lower_bound_ip_address'] = self.ip_data['lower_bound_ip_address'].apply(self.ip_to_integer)
         self.ip_data['upper_bound_ip_address'] = self.ip_data['upper_bound_ip_address'].apply(self.ip_to_integer)
@@ -54,6 +65,7 @@ class FraudPreprocessing:
         )
         
         self.fraud_data = merged_df
+
     
     @staticmethod
     def ip_to_integer(ip):
