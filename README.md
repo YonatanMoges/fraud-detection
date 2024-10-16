@@ -5,9 +5,23 @@
 This project, developed for **Adey Innovations Inc.**, aims to enhance fraud detection for e-commerce transactions and bank credit transactions using machine learning techniques. The main objective is to build and deploy models that accurately identify fraudulent transactions by analyzing transaction data, patterns, and geolocation information.
 
 ## Project Structure
-
-├── data/ │ ├── Fraud_Data.csv # Raw e-commerce transaction data │ ├── IpAddress_to_Country.csv # IP address to country mapping data │ ├── creditcard.csv # Raw bank transaction data │ ├── processed_fraud_data.csv # Preprocessed e-commerce transaction data │ ├── processed_credit_data.csv # Preprocessed bank transaction data │ ├── notebooks/ │ └── demo.ipynb # Demo notebook for preprocessing and analysis │ ├── scripts/ │ └── preprocessing.py # Preprocessing code for data cleaning, merging, and feature engineering │ ├── README.md # Project documentation ├── requirements.txt # Project dependencies
-
+``` bash
+fraud-detection/
+├── data/
+│   ├── Fraud_Data.csv                # Raw e-commerce transaction data
+│   ├── IpAddress_to_Country.csv      # IP address to country mapping data
+│   ├── creditcard.csv                # Raw bank transaction data
+│
+├── notebooks/
+│   └── preprocessing.ipynb                    # Notebook for demonstrating preprocessing and analysis
+│
+├── scripts/
+│   └── preprocessing.py              # Script for data preprocessing and feature engineering
+│
+├── README.md                         # Project documentation
+├── requirements.txt                  # Project dependencies for installation
+└── .gitignore                        # Files and directories to ignore in Git
+```
 
 ## Datasets
 
@@ -43,13 +57,17 @@ This project, developed for **Adey Innovations Inc.**, aims to enhance fraud det
    from scripts.preprocessing import FraudPreprocessing
     ```
    # Initialize preprocessor
+   ```python
    preprocessor = FraudPreprocessing()
-
+    ```
    # Run all preprocessing steps
+   ```python
    fraud_data_processed, credit_data_processed = preprocessor.preprocess_all()
-
+    ```
    # Save processed datasets
+   ```python
    preprocessor.save_processed_data("processed_fraud_data.csv", "processed_credit_data.csv")
-
+    ```
+    
 2. **Demo**: 
     The `notebooks/preprocessing.ipynb` notebook provides an example of running preprocessing, and performing exploratory data analysis.
