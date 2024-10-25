@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-#import tensorflow as tf
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Conv1D, MaxPooling1D, Flatten
 import mlflow
@@ -24,12 +24,20 @@ class FraudDetectionModels:
         return train_test_split(X, y, test_size=0.2, random_state=42)
     
     def evaluate_model(self, model, X_test, y_test):
-        y_pred = model.predict(X_test)
+        # Get predicted probabilities
+        y_pred_prob = model.predict(X_test)
+        
+        # Convert probabilities to binary predictions
+        y_pred = (y_pred_prob > 0.5).astype(int)
+        
+        # Calculate evaluation metrics
         accuracy = accuracy_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
+        
         return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1_score": f1}
+
     
     def logistic_regression(self, X_train, X_test, y_train, y_test):
         model = LogisticRegression()
