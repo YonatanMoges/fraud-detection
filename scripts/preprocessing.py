@@ -1,5 +1,3 @@
-# scripts/preprocessing.py
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
@@ -22,9 +20,12 @@ class FraudPreprocessing:
         self.fraud_data.drop_duplicates(inplace=True)
         self.credit_data.drop_duplicates(inplace=True)
         
-        # Convert datetime fields
-        self.fraud_data['signup_time'] = pd.to_datetime(self.fraud_data['signup_time'])
-        self.fraud_data['purchase_time'] = pd.to_datetime(self.fraud_data['purchase_time'])
+        # Convert datetime fields if they exist in fraud_data
+        if 'signup_time' in self.fraud_data.columns:
+            self.fraud_data['signup_time'] = pd.to_datetime(self.fraud_data['signup_time'], errors='coerce')
+        if 'purchase_time' in self.fraud_data.columns:
+            self.fraud_data['purchase_time'] = pd.to_datetime(self.fraud_data['purchase_time'], errors='coerce')
+
     
     def univariate_analysis(self):
         # Univariate analysis for basic insights
@@ -80,28 +81,50 @@ class FraudPreprocessing:
         except ValueError:
             return 0  # Return 0 if any part of IP address is not an integer
 
+    
     def feature_engineering(self):
-        # Transaction frequency and velocity
-        self.fraud_data['signup_purchase_diff'] = (self.fraud_data['purchase_time'] - self.fraud_data['signup_time']).dt.total_seconds()
+        # Check for datetime columns and ensure they are converted
+        if 'signup_time' in self.fraud_data.columns:
+            self.fraud_data['signup_time'] = pd.to_datetime(self.fraud_data['signup_time'], errors='coerce')
+        if 'purchase_time' in self.fraud_data.columns:
+            self.fraud_data['purchase_time'] = pd.to_datetime(self.fraud_data['purchase_time'], errors='coerce')
         
-        # Hour and day of the week features
-        self.fraud_data['hour_of_day'] = self.fraud_data['purchase_time'].dt.hour
-        self.fraud_data['day_of_week'] = self.fraud_data['purchase_time'].dt.dayofweek
-    
+        # Only proceed with feature engineering if both columns are present
+        if 'signup_time' in self.fraud_data.columns and 'purchase_time' in self.fraud_data.columns:
+            # Drop rows where datetime conversion failed
+            self.fraud_data.dropna(subset=['signup_time', 'purchase_time'], inplace=True)
+            
+            # Extract features
+            self.fraud_data['signup_purchase_diff'] = (self.fraud_data['purchase_time'] - self.fraud_data['signup_time']).dt.total_seconds()
+            self.fraud_data['hour_of_day'] = self.fraud_data['purchase_time'].dt.hour
+            self.fraud_data['day_of_week'] = self.fraud_data['purchase_time'].dt.dayofweek
+            
+            # Remove the original datetime columns to prevent issues during model training
+            self.fraud_data.drop(columns=['signup_time', 'purchase_time'], inplace=True)
+
     def normalize_and_scale(self):
-        # Scaling numeric columns
+        # Scaling numeric columns (apply only on numeric columns)
         scaler = StandardScaler()
-        self.credit_data['Amount'] = scaler.fit_transform(self.credit_data[['Amount']])
-        
+        num_columns = self.credit_data.select_dtypes(include=[np.number]).columns
+        self.credit_data[num_columns] = scaler.fit_transform(self.credit_data[num_columns])
+
         minmax_scaler = MinMaxScaler()
-        self.fraud_data['purchase_value'] = minmax_scaler.fit_transform(self.fraud_data[['purchase_value']])
-    
+        fraud_numeric_columns = self.fraud_data.select_dtypes(include=[np.number]).columns
+        self.fraud_data[fraud_numeric_columns] = minmax_scaler.fit_transform(self.fraud_data[fraud_numeric_columns])
+
     def encode_categorical_features(self):
-        # Encoding categorical features
-        le = LabelEncoder()
-        self.fraud_data['source'] = le.fit_transform(self.fraud_data['source'])
-        self.fraud_data['browser'] = le.fit_transform(self.fraud_data['browser'])
-        self.fraud_data['sex'] = le.fit_transform(self.fraud_data['sex'])
+        # Automatically detect categorical columns and encode them
+        categorical_columns = self.fraud_data.select_dtypes(include=['object']).columns
+        for col in categorical_columns:
+            le = LabelEncoder()
+            self.fraud_data[col] = le.fit_transform(self.fraud_data[col].astype(str))
+
+        # Repeat for credit data if needed
+        credit_categorical_columns = self.credit_data.select_dtypes(include=['object']).columns
+        for col in credit_categorical_columns:
+            le = LabelEncoder()
+            self.credit_data[col] = le.fit_transform(self.credit_data[col].astype(str))
+
     
     def preprocess_all(self):
         # Run all preprocessing steps
