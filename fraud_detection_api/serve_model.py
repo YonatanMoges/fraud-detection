@@ -33,5 +33,21 @@ def predict():
 
     return jsonify(response)
 
+# Add the summary endpoint
+@app.route('/api/summary', methods=['GET'])
+def summary():
+    try:
+        summary_data = {
+            "model_type": "RandomForest",
+            "num_trees": models["fraud_model"].n_estimators,
+            "trained_on": "fraud dataset"
+        }
+        return jsonify(summary_data)
+    except Exception as e:
+        logger.error(f"Error in summary endpoint: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+
