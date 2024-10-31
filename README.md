@@ -132,5 +132,5 @@ pip install -r requirements.txt
 # Start the dashboard
 python app.py
 ```
-Conclusion
+## Conclusion
 This project provides an end-to-end solution for fraud detection on e-commerce and bank transactions. It includes data preprocessing, model training, explainability, deployment through a Flask API, and an interactive dashboard to gain insights into fraud trends and model behavior.
