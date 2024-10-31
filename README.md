@@ -1,5 +1,4 @@
 # Fraud Detection Project
-
 ## Table of Contents
 - [Overview](#overview)
 - [Project Structure](#project-structure)
@@ -13,7 +12,6 @@
   - [API Deployment](#4-api-deployment)
   - [Dashboard Development](#5-dashboard-development)
 - [Conclusion](#conclusion)
-
 
 ## Overview
 This project, developed for Adey Innovations Inc., aims to enhance fraud detection for e-commerce and bank credit transactions using machine learning techniques. The objective is to accurately identify fraudulent transactions by analyzing transaction data, patterns, and geolocation information. This project includes data preprocessing, model training, model explainability, API deployment, and dashboard development.
@@ -85,13 +83,17 @@ pip install -r requirements.txt
 ```
 ## Usage
 
-1. **Preprocessing**: The `scripts/preprocessing.py` file contains a FraudPreprocessing class for preprocessing both e-commerce and credit card transaction data. The `notebooks/preprocessing.ipynb` notebook provides an example of running preprocessing and performing exploratory data analysis.
+### 1. **Preprocessing**: 
+The `scripts/preprocessing.py` file contains a FraudPreprocessing class for preprocessing both e-commerce and credit card transaction data. The `notebooks/preprocessing.ipynb` notebook provides an example of running preprocessing and performing exploratory data analysis.
 
-2. **Model Training**: The `scripts/model_training.py` script includes the FraudDetectionModels class, which handles training and evaluating various machine learning models. Run this script to train models on the preprocessed data. For detailed results and insights, refer to `notebooks/model_training.ipynb`.
+### 2. **Model Training**:
+The `scripts/model_training.py` script includes the FraudDetectionModels class, which handles training and evaluating various machine learning models. Run this script to train models on the preprocessed data. For detailed results and insights, refer to `notebooks/model_training.ipynb`.
 
-3. **Model Explainability**: The `scripts/model_explainability.py` script uses SHAP and LIME to explain model predictions and feature importance. The `notebooks/model_explainability.ipynb` notebook demonstrates generating interpretability plots for the models.
+### 3. **Model Explainability**:
+The `scripts/model_explainability.py` script uses SHAP and LIME to explain model predictions and feature importance. The `notebooks/model_explainability.ipynb` notebook demonstrates generating interpretability plots for the models.
 
-4. **API Deployment**: The fraud_detection_api directory contains files for deploying the fraud detection model as a Flask API. To build and run the API using Docker:
+### 4. **API Deployment**:
+ The fraud_detection_api directory contains files for deploying the fraud detection model as a Flask API. To build and run the API using Docker:
 
 ```bash
 # Navigate to the fraud_detection_api directory
@@ -116,7 +118,8 @@ curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -
   ]
 }'
 ```
-5. **Dashboard Development**: The fraud_detection_dashboard directory contains the necessary files to launch a Flask and Dash-based dashboard for visualizing fraud detection insights.
+### 5. **Dashboard Development**: 
+The fraud_detection_dashboard directory contains the necessary files to launch a Flask and Dash-based dashboard for visualizing fraud detection insights.
 
 To run the dashboard:
 
